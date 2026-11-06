@@ -46,6 +46,7 @@ summary{cursor:pointer;font-weight:700}
 .sw.sel{border-color:#222;transform:scale(1.07)}
 .avatar{text-align:center}
 .avatar svg{width:190px;height:auto;background:var(--soft);border-radius:22px}
+.avatar svg.scene{width:100%;max-width:380px;background:#fff;border:3px solid var(--soft)}
 .guess{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .guess button{background:var(--soft);border:4px solid var(--dark);border-radius:18px;padding:6px;cursor:pointer}
 .guess button svg{width:100%;max-width:150px;height:auto}
@@ -176,20 +177,40 @@ function avatar(p) {
   const id = "av" + (avN++), H = HAIRC[p.hair], E = EYEC[p.eye], f = p.gender === "f";
   let back = "", front = "";
   if (!p.bald) {
-    const [cx, cy, rx, ry] = { short: [100, 74, 50, 44], medium: [100, 100, 55, 62], long: [100, 128, 58, 88] }[p.length];
-    let tex = "";
-    if (p.style === "curly") {
-      const n = { short: 14, medium: 20, long: 26 }[p.length];
+    const st = p.style, L = p.length;
+    if (st === "curly") {
+      const [cx, cy, rx, ry] = { short: [100, 74, 50, 44], medium: [100, 100, 55, 62], long: [100, 128, 58, 88] }[L];
+      const n = { short: 14, medium: 20, long: 26 }[L]; let tex = "";
       for (let i = 0; i < n; i++) { const t = i / n * 2 * Math.PI; tex += `<circle cx="${(cx + rx * Math.cos(t)).toFixed(1)}" cy="${(cy + ry * Math.sin(t)).toFixed(1)}" r="12" fill="${H}"/>`; }
-    } else if (p.style === "wavy") {
-      for (let x = cx - rx + 8; x < cx + rx; x += 15) tex += `<path d="M${x} ${cy - ry + 4} q6 10 0 20${" t0 20".repeat(Math.ceil(ry * 2 / 20))}" stroke="rgba(0,0,0,.3)" stroke-width="3" fill="none"/>`;
+      back = `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${H}"/>` + tex;
+      for (let i = 0; i <= 8; i++) { const t = Math.PI + i / 8 * Math.PI; front += `<circle cx="${(100 + 38 * Math.cos(t)).toFixed(1)}" cy="${(68 + 22 * Math.sin(t)).toFixed(1)}" r="12" fill="${H}"/>`; }
     } else {
-      for (let x = cx - rx + 8; x < cx + rx; x += 13) tex += `<line x1="${x}" y1="${cy - ry}" x2="${x}" y2="${cy + ry}" stroke="rgba(255,255,255,.22)" stroke-width="2"/>`;
+      const wavy = st === "wavy", topY = 30, cyTop = 78; let d = "", strands = "";
+      if (L === "short") {
+        const pts = [];
+        for (let k = 0; k < 120; k++) { const t = k / 120 * 2 * Math.PI, m = wavy ? 1 + 0.1 * Math.sin(7 * t) : 1; pts.push((100 + 50 * m * Math.cos(t)).toFixed(1) + " " + (74 + 44 * m * Math.sin(t)).toFixed(1)); }
+        d = "M" + pts.join("L") + "Z";
+      } else {
+        const bottom = { medium: 160, long: 208 }[L], half = { medium: 56, long: 60 }[L], A = wavy ? { medium: 10, long: 14 }[L] : 0;
+        const prof = y => y < cyTop ? half * Math.sqrt(Math.max(0, 1 - ((cyTop - y) / (cyTop - topY)) ** 2)) : half;
+        const sh = y => wavy ? A * Math.sin((y - cyTop) / 13) * Math.min(1, Math.max(0, (y - 40) / 30)) : 0;
+        const left = [], right = [], bot = [];
+        for (let y = topY; y <= bottom; y += 2) { left.push([100 - prof(y) + sh(y), y]); right.push([100 + prof(y) + sh(y), y]); }
+        for (let x = 100 - half + sh(bottom); x <= 100 + half + sh(bottom); x += 3) bot.push([x, bottom + (wavy ? 7 * Math.sin((x - 100) / 5) : 0)]);
+        d = "M" + left.concat(bot, right.reverse()).map(q => q[0].toFixed(1) + " " + q[1].toFixed(1)).join("L") + "Z";
+        for (const k of [-46, -23, 0, 23, 46]) {
+          const kk = k * half / 60; let s = "", s2 = "";
+          for (let y = 36; y <= bottom - 8; y += 4) { const x = 100 + kk * prof(y) / half + sh(y); s += (s ? "L" : "M") + x.toFixed(1) + " " + y; s2 += (s2 ? "L" : "M") + (x + 6).toFixed(1) + " " + y; }
+          strands += `<path d="${s}" stroke="rgba(0,0,0,.32)" stroke-width="3.2" fill="none" stroke-linecap="round"/>`;
+          if (wavy) strands += `<path d="${s2}" stroke="rgba(255,255,255,.28)" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+        }
+      }
+      if (!wavy) strands += `<path d="M70 54 Q100 40 130 54" stroke="rgba(255,255,255,.5)" stroke-width="6" fill="none" stroke-linecap="round"/>`;
+      back = `<path d="${d}" fill="${H}"/>${strands}`;
+      front = wavy
+        ? `<path d="M62 90 Q54 40 100 36 Q146 40 138 90 Q136 68 120 68 Q106 68 100 58 Q92 72 78 66 Q66 66 62 90Z" fill="${H}"/>`
+        : `<path d="M62 88 Q56 40 100 37 Q144 40 138 88 L132 62 L70 68 Z" fill="${H}"/>`;
     }
-    const clip = p.style === "curly" ? "" : ` clip-path="url(#${id})"`;
-    back = `<clipPath id="${id}"><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"/></clipPath><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${H}"/>` + (p.style === "curly" ? tex : `<g${clip}>${tex}</g>`);
-    if (p.style === "curly") { for (let i = 0; i <= 8; i++) { const t = Math.PI + i / 8 * Math.PI; front += `<circle cx="${(100 + 38 * Math.cos(t)).toFixed(1)}" cy="${(68 + 22 * Math.sin(t)).toFixed(1)}" r="12" fill="${H}"/>`; } }
-    else front = `<path d="M62 84 Q58 40 100 38 Q142 40 138 84 Q124 60 100 62 Q76 60 62 84Z" fill="${H}"/>`;
   }
   const lashes = f ? `<path d="M72 84 l-4 -4 M78 82 l-2 -5 M128 84 l4 -4 M122 82 l2 -5" stroke="#222" stroke-width="2" fill="none"/>` : "";
   return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="drawing of a person">
@@ -323,8 +344,37 @@ function hangman(next) {
 }
 
 /* ---------- Actividad 2: describir personas ---------- */
+const PANTS = ["#34495e", "#2c3e50", "#7f8c8d", "#8e6e53", "#1f6f8b"];
+const NAMES = { m: ["Tom", "Leo", "Max", "Ben", "Sam"], f: ["Ana", "Mia", "Lucy", "Emma", "Zoe"] };
+function figure(x, H, q, label) {
+  const g = 232, u = H / 10, hr = 1.15 * u, hy = g - H + hr, f = q.gender === "f", hair = HAIRC[q.hair]; let s = "";
+  if (f) s += `<ellipse cx="${x}" cy="${hy + 0.5 * u}" rx="${1.35 * u}" ry="${1.7 * u}" fill="${hair}"/>`;
+  s += `<rect x="${x - 1.35 * u}" y="${g - 3.7 * u}" width="${1.2 * u}" height="${3.4 * u}" rx="${0.3 * u}" fill="${q.pants}"/><rect x="${x + 0.15 * u}" y="${g - 3.7 * u}" width="${1.2 * u}" height="${3.4 * u}" rx="${0.3 * u}" fill="${q.pants}"/>`;
+  s += `<ellipse cx="${x - 0.75 * u}" cy="${g - 0.2 * u}" rx="${0.9 * u}" ry="${0.35 * u}" fill="#333"/><ellipse cx="${x + 0.75 * u}" cy="${g - 0.2 * u}" rx="${0.9 * u}" ry="${0.35 * u}" fill="#333"/>`;
+  s += `<line x1="${x - 1.5 * u}" y1="${g - 7.2 * u}" x2="${x - 2.1 * u}" y2="${g - 4.3 * u}" stroke="${q.skin}" stroke-width="${0.9 * u}" stroke-linecap="round"/><line x1="${x + 1.5 * u}" y1="${g - 7.2 * u}" x2="${x + 2.1 * u}" y2="${g - 4.3 * u}" stroke="${q.skin}" stroke-width="${0.9 * u}" stroke-linecap="round"/>`;
+  s += `<rect x="${x - 1.6 * u}" y="${g - 7.6 * u}" width="${3.2 * u}" height="${4 * u}" rx="${0.7 * u}" fill="${q.shirt}"/>`;
+  s += `<circle cx="${x}" cy="${hy}" r="${hr}" fill="${q.skin}"/>`;
+  if (!f) s += `<path d="M${x - hr} ${hy} A${hr} ${hr} 0 0 1 ${x + hr} ${hy} Q${x} ${hy - 0.55 * u} ${x - hr} ${hy}Z" fill="${hair}"/>`;
+  s += `<circle cx="${x - 0.45 * u}" cy="${hy + 0.15 * u}" r="${0.13 * u}" fill="#222"/><circle cx="${x + 0.45 * u}" cy="${hy + 0.15 * u}" r="${0.13 * u}" fill="#222"/><path d="M${x - 0.45 * u} ${hy + 0.55 * u} Q${x} ${hy + 0.95 * u} ${x + 0.45 * u} ${hy + 0.55 * u}" stroke="#a33" stroke-width="${Math.max(1.5, 0.12 * u)}" fill="none" stroke-linecap="round"/>`;
+  s += `<text x="${x}" y="254" text-anchor="middle" font-size="20" font-weight="700" fill="#222" font-family="Trebuchet MS,Verdana,sans-serif">${label}</text>`;
+  return s;
+}
+function heightItems() {
+  const items = [], used = new Set();
+  for (let sc = 0; sc < 2; sc++) {
+    const mk = () => { const q = Object.assign(person(false), { pants: one(PANTS) }); let n; do { n = one(NAMES[q.gender]); } while (used.has(n)); used.add(n); q.name = n; return q; };
+    const a = mk(), b = mk(), aTall = Math.random() < 0.5;
+    a.H = aTall ? 200 : 110; b.H = aTall ? 110 : 200;
+    const svg = `<svg viewBox="0 0 300 262" class="scene" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="two people, one tall and one short"><line x1="10" y1="32" x2="290" y2="32" stroke="#999" stroke-dasharray="5 5"/><line x1="10" y1="232" x2="290" y2="232" stroke="#6aa86a" stroke-width="6"/>${figure(105, a.H, a, a.name)}${figure(205, b.H, b, b.name)}</svg>`;
+    [a, b].forEach(q => { const o = shuffle(["tall", "short", "high", "low"]); items.push(mc(`${q.name} is ______.`, o, o.indexOf(q.H === 200 ? "tall" : "short"), `<div class="avatar">${svg}</div><p class="center small">👀 Look at the picture: who is taller?</p>`)); });
+  }
+  return items;
+}
 function act2(next) {
+  const styles = pick(["curly", "wavy", "straight"], 2);
   const people = [person(false), person(false), person(true)];
+  people[0].style = styles[0]; people[1].style = styles[1];
+  people.forEach(p => { if (p.style === "wavy" && p.length === "short") p.length = "medium"; });
   const build = [];
   people.forEach(p => {
     const w = pr(p), vis = `<div class="avatar">${avatar(p)}</div>`;
@@ -338,6 +388,7 @@ function act2(next) {
       build.push(m(`${w.His} hair is ______.`, ["curly", "wavy", "straight"], p.style));
     }
   });
+  heightItems().forEach(i => build.push(i));
   runItems(build, "Activity 2", (s, t) => { S.sc.a2 = s + "/" + t; next(); });
 }
 
@@ -377,7 +428,7 @@ const ANIMALS = [
 ];
 function act3(next) {
   const items = [];
-  pick(ANIMALS, 3).forEach(a => {
+  pick(ANIMALS, 4).forEach(a => {
     items.push(typed(a.e, "What animal is this? Write its name in English.", [a.n]));
     pick(a.t, 2).forEach(([s, v, why]) => items.push(tf(a.e, s, v, why)));
   });
@@ -409,55 +460,73 @@ const IRR = { go: "went", goes: "went", eat: "ate", eats: "ate", see: "saw", see
   make: "made", makes: "made", come: "came", comes: "came", take: "took", takes: "took", drink: "drank", drinks: "drank", ride: "rode", rides: "rode", meet: "met", meets: "met",
   run: "ran", runs: "ran", sleep: "slept", sleeps: "slept", get: "got", gets: "got", give: "gave", gives: "gave", find: "found", finds: "found", write: "wrote", writes: "wrote",
   sit: "sat", sits: "sat", sing: "sang", sings: "sang", fly: "flew", flies: "flew", wear: "wore", wears: "wore", drive: "drove", drives: "drove", feel: "felt", feels: "felt", leave: "left", leaves: "left" };
-const REG = new Set(["play", "visit", "walk", "watch", "stay", "jump", "dance", "cook", "clean", "listen", "talk", "wash", "help", "climb", "call", "work", "enjoy", "relax", "rest", "study", "try", "cry", "camp", "paint", "fish", "skate", "hike"]);
+const REG = new Set(["play", "visit", "walk", "watch", "stay", "jump", "dance", "cook", "clean", "listen", "talk", "wash", "climb", "enjoy", "relax", "study", "try", "cry"]);
 const REGSP = { shop: "shopped", stop: "stopped", plan: "planned", travel: "travelled" };
 const OVER = { goed: "went", eated: "ate", swimmed: "swam", buyed: "bought", haved: "had", maked: "made", comed: "came", runned: "ran", taked: "took", drinked: "drank", writed: "wrote", getted: "got", flyed: "flew", sleeped: "slept", seed: "saw", meeted: "met", sitted: "sat" };
-const TYPO = { playd: "played", plaied: "played", visitd: "visited", visitted: "visited", walkd: "walked", wached: "watched", watchd: "watched", stayd: "stayed", beech: "beach", beatch: "beach", famili: "family", fammily: "family", frends: "friends", frend: "friend", vacacion: "vacation", vacasion: "vacation", swiming: "swimming", wuth: "with", whit: "with", whith: "with", wiht: "with", teh: "the", becuase: "because", becouse: "because", sumer: "summer", sommer: "summer", mountan: "mountain", grandmother: "grandmother", grandfater: "grandfather", cusins: "cousins", cousin: "cousin" };
-const NOFLAG = new Set(["to", "did", "didn't", "don't", "doesn't", "can", "could", "will", "would", "should", "must", "may", "might", "let's", "the", "a", "an", "my", "your", "his", "her", "our", "their", "this", "that", "some", "no", "of", "for", "in", "on", "at", "by", "with", "want", "wanted", "like", "love", "liked", "loved", "need", "needed", "about", "after", "before", "without", "going", "to"]);
+const TYPO = { playd: "played", plaied: "played", visitd: "visited", visitted: "visited", walkd: "walked", wached: "watched", watchd: "watched", stayd: "stayed", beech: "beach", beatch: "beach", famili: "family", fammily: "family", frends: "friends", frend: "friend", vacacion: "vacation", vacasion: "vacation", swiming: "swimming", wuth: "with", whit: "with", whith: "with", wiht: "with", teh: "the", becuase: "because", becouse: "because", sumer: "summer", sommer: "summer", mountan: "mountain", grandfater: "grandfather", cusins: "cousins" };
+const SUBJ = new Set(["i", "we", "he", "she", "they", "you", "it", "also", "then", "and", "always", "sometimes", "usually", "really", "never", "often", "just", "finally", "first", "mom", "dad", "mother", "father", "brother", "sister", "grandma", "grandpa", "grandmother", "grandfather", "cousin", "cousins", "friend", "friends", "family", "uncle", "aunt", "parents", "everyone", "dog", "cat"]);
+const BE_SUBJ = new Set(["i", "he", "she", "it", "we", "they", "you", "there"]);
+const EXAMPLES = ["I went to the beach with my family", "We ate ice cream every day", "I played with my cousins", "We visited my grandma"];
+const wordsOf = x => x.toLowerCase().replace(/[^a-z' ]/g, " ").split(/\s+/).filter(Boolean);
+function isExample(sent) {
+  const a = new Set(wordsOf(sent));
+  return EXAMPLES.some(e => { const b = new Set(wordsOf(e)); const inter = [...a].filter(x => b.has(x)).length; return inter / new Set([...a, ...b]).size >= 0.85; });
+}
 function baseOf(w) {
-  if (REG.has(w)) return w; if (REGSP[w]) return w;
+  if (REG.has(w) || REGSP[w]) return w;
   if (w.endsWith("ies") && REG.has(w.slice(0, -3) + "y")) return w.slice(0, -3) + "y";
   if (w.endsWith("es") && REG.has(w.slice(0, -2))) return w.slice(0, -2);
   if (w.endsWith("s") && REG.has(w.slice(0, -1))) return w.slice(0, -1);
   return null;
 }
 function regPast(b) { if (REGSP[b]) return REGSP[b]; if (/[^aeiou]y$/.test(b)) return b.slice(0, -1) + "ied"; if (b.endsWith("e")) return b + "d"; return b + "ed"; }
+/* Solo se marca algo cuando hay un error claro. Si la oración está bien, no se toca. */
 function fixSentence(raw) {
-  const s = raw.trim().replace(/\s+/g, " "), notes = []; let gram = false, minor = false;
-  const toks = s.match(/[A-Za-z']+|[^A-Za-z']+/g) || [];
-  const hasFav = /favou?rite/i.test(s); let prev = "", firstWord = true;
-  const out = toks.map(t => {
+  let work = raw.trim().replace(/\s+/g, " "); const s = work, notes = []; let gram = false, minor = false;
+  const m1 = work.match(/^me and my (\w+)/i);
+  if (m1) { work = "My " + m1[1] + " and I" + work.slice(m1[0].length); gram = true; notes.push(`Se dice <b>My ${m1[1]} and I</b> (la otra persona va primero y después <i>I</i>).`); }
+  else if (/^me\s/i.test(work)) { work = "I" + work.slice(2); gram = true; notes.push(`Al empezar con el que hace la acción se usa <b>I</b> (no <i>me</i>).`); }
+  const toks = work.match(/[A-Za-z']+|[^A-Za-z']+/g) || [];
+  const hasFav = /favou?rite/i.test(work); let prev = "", prevRaw = "";
+  const out = toks.map((t, i) => {
     if (!/^[A-Za-z']+$/.test(t)) return t;
-    const w = t.toLowerCase(); let r = t;
+    const w = t.toLowerCase(), rest = toks.slice(i + 1).join(""); let r = t;
+    const subjOk = prev && (SUBJ.has(prev) || (/^[A-Z]/.test(prevRaw) && prevRaw !== "I"));
+    const haveOk = !/^(have|has)$/.test(w) || /^\s+(fun|lots|a\s+(lot|good|great|nice|wonderful|really))/i.test(rest);
     if (OVER[w]) { r = OVER[w]; gram = true; notes.push(`<b>${t}</b> → <b>${r}</b>: ese verbo es irregular, no lleva -ed.`); }
-    else if (IRR[w] && !NOFLAG.has(prev) && prev && !(w === "have" && /^(to|can|will|must)$/.test(prev))) { r = IRR[w]; gram = true; notes.push(`<b>${t}</b> → <b>${r}</b>: las vacaciones ya pasaron, así que el verbo va en <b>pasado</b>.`); }
-    else if (baseOf(w) && !NOFLAG.has(prev) && prev) { r = regPast(baseOf(w)); gram = true; notes.push(`<b>${t}</b> → <b>${r}</b>: es un verbo regular, en pasado se le agrega <b>-ed</b>.`); }
-    else if ((w === "am" || w === "is" || w === "are") && !hasFav) { r = w === "are" ? "were" : "was"; gram = true; notes.push(`<b>${t}</b> → <b>${r}</b>: el verbo <i>to be</i> en pasado es <b>was</b> (I, he, she, it) y <b>were</b> (we, you, they).`); }
+    else if (IRR[w] && subjOk && haveOk) { r = IRR[w]; gram = true; notes.push(`<b>${t}</b> → <b>${r}</b>: las vacaciones ya pasaron, así que el verbo va en <b>pasado</b>.`); }
+    else if (baseOf(w) && subjOk) { r = regPast(baseOf(w)); gram = true; notes.push(`<b>${t}</b> → <b>${r}</b>: es un verbo regular, en pasado se le agrega <b>-ed</b>.`); }
+    else if ((w === "am" || w === "is" || w === "are") && BE_SUBJ.has(prev) && !hasFav) { r = w === "are" ? "were" : "was"; gram = true; notes.push(`<b>${t}</b> → <b>${r}</b>: el verbo <i>to be</i> en pasado es <b>was</b> (I, he, she, it) y <b>were</b> (we, you, they).`); }
     else if (w === "were" && /^(i|he|she|it)$/.test(prev)) { r = "was"; gram = true; notes.push(`<b>${t}</b> → <b>was</b>: con I, he, she o it se usa <b>was</b>.`); }
     else if (w === "was" && /^(we|they|you)$/.test(prev)) { r = "were"; gram = true; notes.push(`<b>${t}</b> → <b>were</b>: con we, you o they se usa <b>were</b>.`); }
-    else if (TYPO[w] && TYPO[w] !== w) { r = TYPO[w]; minor = true; notes.push(`Ortografía: <b>${t}</b> se escribe <b>${r}</b>.`); }
-    else if (w === "i" && t === "i") { r = "I"; minor = true; notes.push(`La palabra <b>I</b> siempre va con mayúscula.`); }
-    else if (w === "me" && firstWord) { r = "I"; gram = true; notes.push(`Al empezar una oración con el que hace la acción se usa <b>I</b> (no <i>me</i>).`); }
-    if (r !== t && r === r.toLowerCase() && /^[A-Z]/.test(t) && firstWord) r = cap(r);
-    prev = w; firstWord = false; return r;
+    else if (TYPO[w]) { r = TYPO[w]; minor = true; notes.push(`Ortografía: <b>${t}</b> se escribe <b>${r}</b>.`); }
+    else if (t === "i") { r = "I"; minor = true; notes.push(`La palabra <b>I</b> siempre va con mayúscula.`); }
+    if (r !== t && r === r.toLowerCase() && /^[A-Z]/.test(t) && !prev) r = r.charAt(0).toUpperCase() + r.slice(1);
+    prev = w; prevRaw = t; return r;
   });
   let fixed = out.join("");
-  if (/^[a-z]/.test(fixed)) { fixed = cap(fixed); minor = true; notes.push("La oración empieza con <b>mayúscula</b>."); }
-  if (!/[.!?]$/.test(fixed)) { fixed += "."; minor = true; notes.push("Al final de la oración va un <b>punto</b>."); }
-  if (s.split(" ").length < 2) { gram = true; notes.push("Probá escribir una oración más completa (sujeto + verbo + lugar o cosa)."); }
+  if (/^[a-z]/.test(fixed)) { fixed = fixed.charAt(0).toUpperCase() + fixed.slice(1); minor = true; notes.push("La oración empieza con <b>mayúscula</b>."); }
+  if (wordsOf(work).length < 2) { gram = true; notes.push("Probá escribir una oración más completa (sujeto + verbo + lugar o cosa)."); }
   return { orig: s, fixed, notes, gram, minor };
 }
 function act4(next) {
   show(`<div class="card"><span class="tag">Activity 4 · Writing</span><h1>🏖️ My last vacations</h1>
-  <p>Write <b>three sentences</b> in English about your last vacations. Remember: the vacations are in the <b>past</b>!</p>
-  <div class="read"><p><b>Examples:</b></p><p>🏊 I <b>went</b> to the beach with my family.<br>🍦 We <b>ate</b> ice cream every day.<br>🎮 I <b>played</b> with my cousins.<br>🏞️ We <b>visited</b> my grandma.</p></div>
+  <p>Write <b>three sentences</b> in English about <b>YOUR</b> last vacations. Remember: the vacations are in the <b>past</b>!</p>
+  <div class="read"><p><b>Examples</b> <span class="small">(just to help you. ⚠️ You can't use them!)</span></p><p>🏊 I <b>went</b> to the beach with my family.<br>🍦 We <b>ate</b> ice cream every day.<br>🎮 I <b>played</b> with my cousins.<br>🏞️ We <b>visited</b> my grandma.</p></div>
   <label>Sentence 1</label><input type="text" class="vs" autocomplete="off" placeholder="I ..." spellcheck="false">
   <label>Sentence 2</label><input type="text" class="vs" autocomplete="off" placeholder="We ..." spellcheck="false">
   <label>Sentence 3</label><input type="text" class="vs" autocomplete="off" placeholder="My ..." spellcheck="false">
   <div class="center"><button class="btn" id="ok">Send my sentences ✉️</button><div id="err" style="color:#c00;font-weight:700"></div></div></div>`);
   $("#ok").onclick = () => {
-    const v = [...document.querySelectorAll(".vs")].map(i => i.value);
+    const ins = [...document.querySelectorAll(".vs")], v = ins.map(i => i.value);
+    ins.forEach(i => i.style.borderColor = "");
     if (v.some(x => !x.trim())) { $("#err").textContent = "Please write the three sentences 😊"; return; }
+    const copied = ins.filter(i => isExample(i.value));
+    if (copied.length) {
+      copied.forEach(i => { i.value = ""; i.style.borderColor = "#d33"; i.placeholder = "Write YOUR OWN sentence here..."; });
+      $("#err").innerHTML = `<div class="fb bad" style="text-align:left;margin-top:12px">🚫 <b>You can't use the examples!</b> Write <b>your own</b> sentences about <b>your</b> vacations. Please write ${copied.length > 1 ? "those sentences" : "that sentence"} again.<br>🇺🇾 <b>No podés usar los ejemplos.</b> Escribí oraciones tuyas, sobre tus vacaciones, y volvé a enviarlas.</div>`;
+      copied[0].focus(); return;
+    }
     const res = v.map(fixSentence), g = res.filter(r => r.gram).length;
     S.sc.a4 = ["Excellent ⭐⭐⭐", "Very good ⭐⭐", "Good ⭐", "OK 🙂"][g];
     show(`<div class="card"><span class="tag">Activity 4 · Check</span><h1>Let's check your sentences ✏️</h1>
