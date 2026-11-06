@@ -17,7 +17,7 @@ La página no guarda ni envía ningún dato. El nombre solo se muestra en pantal
 No usa servicios externos, cookies ni anuncios.
 
 ## Notas para la docente
-- La rutina de Valverde es un **ejemplo para clase**: son reales que es de Montevideo, que juega en Real Madrid y que le dicen "Pajarito"; los horarios son ilustrativos.
+- La rutina de Valverde es un **ejemplo para clase**: los datos reales son que es de Montevideo, que juega en Real Madrid y que le dicen "Pajarito"; los horarios son ilustrativos.
 - Las personas son dibujos generados por la página (no fotos), así la respuesta siempre coincide con la imagen.
 - El corrector de la Activity 4 detecta errores frecuentes (verbos en presente, *am/is/are*, verbos irregulares mal formados, mayúsculas, punto final y algunos errores de ortografía). No es perfecto: sirve de guía.
 
