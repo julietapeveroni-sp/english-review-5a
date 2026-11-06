@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>English Review · 5th A · Escuela 371</title>
+<style>
+:root{--main:#4da3ff;--dark:color-mix(in srgb,var(--main) 52%,#000);--soft:color-mix(in srgb,var(--main) 16%,#fff)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;background:var(--main);font-family:"Trebuchet MS","Comic Sans MS",Verdana,sans-serif;color:#222;transition:background .4s}
+#bar{position:sticky;top:0;height:10px;background:rgba(255,255,255,.45);z-index:5}
+#barfill{display:block;height:100%;width:0;background:var(--dark);transition:width .4s}
+header{text-align:center;padding:14px 12px 0}
+header span{display:inline-block;background:#fff;border-radius:999px;padding:6px 18px;font-weight:700;font-size:.95rem;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+#app{max-width:880px;margin:0 auto;padding:16px}
+.card{background:#fff;border-radius:26px;padding:26px;box-shadow:0 8px 0 rgba(0,0,0,.15);animation:pop .35s ease}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+h1{margin:.2em 0;font-size:2.1rem;color:var(--dark);text-align:center}
+h2{margin:.4em 0;font-size:1.5rem}
+h2.q{font-size:1.6rem;margin:.6em 0}
+p{font-size:1.15rem;line-height:1.55}
+.tag{display:inline-block;background:var(--soft);color:var(--dark);font-weight:700;border-radius:999px;padding:4px 14px;margin-bottom:8px}
+.center{text-align:center}
+.big{font-size:5rem;line-height:1.1}
+.huge{font-size:7rem;line-height:1.1}
+.btn{font:inherit;font-weight:700;font-size:1.2rem;padding:12px 26px;border:0;border-radius:16px;background:var(--dark);color:#fff;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.3);margin:8px 6px}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.btn.alt{background:#fff;color:var(--dark);border:3px solid var(--dark)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+input[type=text],textarea{font:inherit;font-size:1.3rem;width:100%;padding:12px 16px;border:3px solid var(--dark);border-radius:14px;margin:6px 0 12px}
+label{font-weight:700;font-size:1.1rem}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:1.25rem;padding:12px 16px;margin:9px 0;background:var(--soft);border:3px solid var(--dark);border-radius:14px;cursor:pointer}
+.opt:hover:not(:disabled){filter:brightness(.96)}
+.opt.right{background:#c8f7c5;border-color:#2e9e3e}
+.opt.wrong{background:#ffd3d3;border-color:#d33}
+.fb{margin-top:14px;border-radius:16px;padding:6px 16px}
+.fb.good{background:#e3fbe1}.fb.bad{background:#ffe7e7}
+.read{background:var(--soft);border-radius:18px;padding:6px 20px;margin:10px 0}
+details{background:var(--soft);border-radius:14px;padding:8px 14px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700}
+.swatches{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:16px 0}
+.sw{width:92px;border:4px solid #fff;border-radius:18px;cursor:pointer;padding:0;font:inherit;font-weight:700;overflow:hidden;background:#fff;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.sw i{display:block;height:54px}
+.sw span{display:block;padding:4px 0;font-size:.9rem}
+.sw.sel{border-color:#222;transform:scale(1.07)}
+.avatar{text-align:center}
+.avatar svg{width:190px;height:auto;background:var(--soft);border-radius:22px}
+.guess{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.guess button{background:var(--soft);border:4px solid var(--dark);border-radius:18px;padding:6px;cursor:pointer}
+.guess button svg{width:100%;max-width:150px;height:auto}
+.guess button.right{background:#c8f7c5;border-color:#2e9e3e}
+.guess button.wrong{background:#ffd3d3;border-color:#d33}
+.keys{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0}
+.key{width:46px;height:46px;font:inherit;font-weight:700;font-size:1.15rem;border:0;border-radius:10px;background:var(--dark);color:#fff;cursor:pointer}
+.key:disabled{opacity:.3}
+.key.ok{background:#2e9e3e;opacity:1}.key.no{background:#d33}
+.word{font-size:2.2rem;letter-spacing:.35em;text-align:center;font-weight:700;margin:6px 0;word-break:break-word}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mcard{aspect-ratio:1;border:0;border-radius:16px;background:var(--dark);color:#fff;font:inherit;font-size:2.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:4px}
+.mcard.word{font-size:1.15rem;font-weight:700;letter-spacing:0}
+.mcard.up{background:#fff;color:#222;border:4px solid var(--dark)}
+.mcard.done{background:#c8f7c5;color:#222;border:4px solid #2e9e3e}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.match button{display:block;width:100%;margin:8px 0;font:inherit;font-size:1.3rem;font-weight:700;padding:10px;background:var(--soft);border:3px solid var(--dark);border-radius:14px;cursor:pointer}
+.match button.em{font-size:2.6rem;padding:2px}
+.match button.pick{background:#fff3b0;transform:scale(1.04)}
+.match button.done{background:#c8f7c5;border-color:#2e9e3e;cursor:default}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.corr{border-left:6px solid var(--dark);background:var(--soft);border-radius:12px;padding:6px 14px;margin:12px 0}
+.corr .fix{color:#16802a;font-weight:700;font-size:1.25rem}
+.corr .was{text-decoration:line-through;color:#a33}
+.corr ul{margin:4px 0 6px;padding-left:20px}
+.rating{font-size:3rem;font-weight:700;color:var(--dark)}
+.conf{position:fixed;top:-40px;font-size:2rem;pointer-events:none;animation:fall linear forwards;z-index:9}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+canvas{width:100%;height:auto;border:4px solid var(--dark);border-radius:16px;background:#fff;touch-action:none;cursor:crosshair}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:10px 0}
+.dot{width:36px;height:36px;border-radius:50%;border:4px solid #fff;box-shadow:0 0 0 2px #888;cursor:pointer;padding:0}
+.dot.sel{box-shadow:0 0 0 4px #222}
+.small{font-size:.95rem;color:#555}
+@media(max-width:560px){h1{font-size:1.7rem}.big{font-size:4rem}.mem{grid-template-columns:repeat(3,1fr)}.match{gap:10px}}
+</style>
+</head>
+<body>
+<div id="bar"><i id="barfill"></i></div>
+<header><span>🏫 5th A · Escuela Primaria Nº371 · English Review</span></header>
+<div id="app"></div>
+<noscript><p style="background:#fff;padding:20px">Please turn on JavaScript to use this page.</p></noscript>
+
+<script>
+"use strict";
+/* ---------- utilidades ---------- */
+const S = { first: "", last: "", color: "#4da3ff", sc: {} };
+const app = document.getElementById("app");
+const $ = (s, r = document) => r.querySelector(s);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = (a, n) => shuffle(a).slice(0, n);
+const one = a => a[Math.floor(Math.random() * a.length)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+function show(html) { app.innerHTML = html; window.scrollTo(0, 0); return app; }
+function confetti(list, n = 30) {
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement("div");
+    d.className = "conf"; d.textContent = one(list);
+    d.style.left = Math.random() * 100 + "vw";
+    d.style.animationDuration = 2.5 + Math.random() * 3 + "s";
+    d.style.animationDelay = Math.random() * 1.5 + "s";
+    document.body.appendChild(d); setTimeout(() => d.remove(), 8000);
+  }
+}
+function applyColor(hex) {
+  S.color = hex; document.documentElement.style.setProperty("--main", hex);
+}
+
+/* ---------- motor de preguntas ---------- */
+function runItems(items, title, done) {
+  let i = 0, score = 0;
+  (function next() {
+    if (i >= items.length) { done(score, items.length); return; }
+    show(`<div class="card"><span class="tag">${title} · ${i + 1}/${items.length}</span><div id="box"></div><div id="fb"></div></div>`);
+    let answered = false;
+    items[i].render($("#box"), (ok, msg) => {
+      if (answered) return; answered = true; if (ok) score++;
+      const fb = $("#fb"); fb.className = "fb " + (ok ? "good" : "bad");
+      fb.innerHTML = `<p>${ok ? "✅ <b>Great!</b>" : "❌ <b>Not this time.</b>"} ${msg || ""}</p><div class="center"><button class="btn" id="nx">${i + 1 < items.length ? "Next ➜" : "Finish ➜"}</button></div>`;
+      $("#nx").focus(); $("#nx").onclick = () => { i++; next(); };
+    });
+  })();
+}
+function mc(prompt, opts, ans, visual = "", extra = "") {
+  return { render(box, report) {
+    const L = "abcd";
+    box.innerHTML = `${visual}${extra}<h2 class="q">${prompt}</h2>` + opts.map((o, i) => `<button class="opt" data-i="${i}"><b>${L[i]})</b> ${o}</button>`).join("");
+    const bs = box.querySelectorAll(".opt");
+    bs.forEach(b => b.onclick = () => {
+      const i = +b.dataset.i; bs.forEach(x => x.disabled = true); bs[ans].classList.add("right");
+      if (i !== ans) b.classList.add("wrong");
+      report(i === ans, i === ans ? "" : `The answer is <b>${L[ans]}) ${opts[ans]}</b>.`);
+    });
+  } };
+}
+function tf(visual, statement, truth, why) {
+  return { render(box, report) {
+    box.innerHTML = `<div class="center big">${visual}</div><h2 class="q center">True or false?</h2><p class="center" style="font-size:1.5rem"><b>${statement}</b></p><div class="center"><button class="btn" data-v="1">✅ True</button><button class="btn alt" data-v="0">❌ False</button></div>`;
+    box.querySelectorAll("[data-v]").forEach(b => b.onclick = () => {
+      box.querySelectorAll("[data-v]").forEach(x => x.disabled = true);
+      const ok = (b.dataset.v === "1") === truth;
+      report(ok, ok ? "" : `It is <b>${truth ? "true" : "false"}</b>. ${why || ""}`);
+    });
+  } };
+}
+function typed(visual, prompt, accepted) {
+  return { render(box, report) {
+    box.innerHTML = `<div class="center huge">${visual}</div><h2 class="q center">${prompt}</h2><input type="text" id="ans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Write here..."><div class="center"><button class="btn" id="ck">Check ✔</button></div>`;
+    const inp = $("#ans"); inp.focus();
+    const go = () => {
+      const v = inp.value.trim().toLowerCase().replace(/^(a|an|the)\s+/, ""); if (!v) return;
+      inp.disabled = true; $("#ck").disabled = true;
+      const ok = accepted.includes(v);
+      report(ok, ok ? "" : `It is spelled <b>${accepted[0]}</b>.`);
+    };
+    $("#ck").onclick = go; inp.onkeydown = e => { if (e.key === "Enter") go(); };
+  } };
+}
+
+/* ---------- avatares (dibujos de personas) ---------- */
+const SKINS = ["#f6d2b0", "#e8b98d", "#c68a5b", "#8d5a3b"];
+const SHIRTS = ["#e4572e", "#2e86ab", "#7bb661", "#f0a500", "#8e5ea2", "#ef7bb1"];
+const HAIRC = { black: "#241c18", brown: "#7a4a25", blond: "#e8c45e", red: "#b9461b" };
+const EYEC = { brown: "#6b3f1d", blue: "#3a7bd5", green: "#35a05a", grey: "#8a97a6" };
+let avN = 0;
+function avatar(p) {
+  const id = "av" + (avN++), H = HAIRC[p.hair], E = EYEC[p.eye], f = p.gender === "f";
+  let back = "", front = "";
+  if (!p.bald) {
+    const [cx, cy, rx, ry] = { short: [100, 74, 50, 44], medium: [100, 100, 55, 62], long: [100, 128, 58, 88] }[p.length];
+    let tex = "";
+    if (p.style === "curly") {
+      const n = { short: 14, medium: 20, long: 26 }[p.length];
+      for (let i = 0; i < n; i++) { const t = i / n * 2 * Math.PI; tex += `<circle cx="${(cx + rx * Math.cos(t)).toFixed(1)}" cy="${(cy + ry * Math.sin(t)).toFixed(1)}" r="12" fill="${H}"/>`; }
+    } else if (p.style === "wavy") {
+      for (let x = cx - rx + 8; x < cx + rx; x += 15) tex += `<path d="M${x} ${cy - ry + 4} q6 10 0 20${" t0 20".repeat(Math.ceil(ry * 2 / 20))}" stroke="rgba(0,0,0,.3)" stroke-width="3" fill="none"/>`;
+    } else {
+      for (let x = cx - rx + 8; x < cx + rx; x += 13) tex += `<line x1="${x}" y1="${cy - ry}" x2="${x}" y2="${cy + ry}" stroke="rgba(255,255,255,.22)" stroke-width="2"/>`;
+    }
+    const clip = p.style === "curly" ? "" : ` clip-path="url(#${id})"`;
+    back = `<clipPath id="${id}"><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"/></clipPath><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${H}"/>` + (p.style === "curly" ? tex : `<g${clip}>${tex}</g>`);
+    if (p.style === "curly") { for (let i = 0; i <= 8; i++) { const t = Math.PI + i / 8 * Math.PI; front += `<circle cx="${(100 + 38 * Math.cos(t)).toFixed(1)}" cy="${(68 + 22 * Math.sin(t)).toFixed(1)}" r="12" fill="${H}"/>`; } }
+    else front = `<path d="M62 84 Q58 40 100 38 Q142 40 138 84 Q124 60 100 62 Q76 60 62 84Z" fill="${H}"/>`;
+  }
+  const lashes = f ? `<path d="M72 84 l-4 -4 M78 82 l-2 -5 M128 84 l4 -4 M122 82 l2 -5" stroke="#222" stroke-width="2" fill="none"/>` : "";
+  return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="drawing of a person">
+  <path d="M25 220 Q25 168 100 164 Q175 168 175 220Z" fill="${p.shirt}"/>
+  <rect x="88" y="130" width="24" height="40" fill="${p.skin}"/>
+  ${back}
+  <circle cx="63" cy="96" r="9" fill="${p.skin}"/><circle cx="137" cy="96" r="9" fill="${p.skin}"/>
+  <ellipse cx="100" cy="90" rx="38" ry="44" fill="${p.skin}"/>
+  <ellipse cx="82" cy="92" rx="9" ry="8" fill="#fff"/><ellipse cx="118" cy="92" rx="9" ry="8" fill="#fff"/>
+  <circle cx="82" cy="92" r="5.5" fill="${E}"/><circle cx="118" cy="92" r="5.5" fill="${E}"/>
+  <circle cx="82" cy="92" r="2.4" fill="#111"/><circle cx="118" cy="92" r="2.4" fill="#111"/>
+  <circle cx="84" cy="90" r="1.3" fill="#fff"/><circle cx="120" cy="90" r="1.3" fill="#fff"/>
+  ${lashes}
+  <path d="M72 78 Q82 73 92 78 M108 78 Q118 73 128 78" stroke="${p.bald ? "#555" : H}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M100 98 q-4 9 1 11" stroke="rgba(0,0,0,.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M87 117 Q100 128 113 117" stroke="${f ? "#c2335a" : "#a33"}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <circle cx="74" cy="108" r="6" fill="rgba(255,100,100,.3)"/><circle cx="126" cy="108" r="6" fill="rgba(255,100,100,.3)"/>
+  ${front}</svg>`;
+}
+function person(bald) {
+  const g = one(["m", "f"]);
+  return { gender: g, skin: one(SKINS), shirt: one(SHIRTS), hair: one(Object.keys(HAIRC)), eye: one(Object.keys(EYEC)),
+    length: g === "m" ? one(["short", "short", "medium"]) : one(["medium", "long", "long", "short"]), style: one(["curly", "wavy", "straight"]), bald: !!bald };
+}
+const pr = p => p.gender === "m" ? { He: "He", he: "he", His: "His", his: "his" } : { He: "She", he: "she", His: "Her", his: "her" };
+
+/* ---------- pantallas simples ---------- */
+function welcome(next) {
+  show(`<div class="card center"><div class="big">👋</div><h1>Welcome!</h1><h2>What's your name?</h2>
+  <div style="text-align:left;max-width:460px;margin:0 auto">
+  <label for="fn">First name</label><input type="text" id="fn" autocomplete="off" placeholder="Write your first name">
+  <label for="ln">Last name</label><input type="text" id="ln" autocomplete="off" placeholder="Write your last name"></div>
+  <p class="small">Your name stays only on this screen. It is not saved or sent anywhere.</p>
+  <button class="btn" id="ok">Next ➜</button><div id="err" style="color:#c00;font-weight:700"></div></div>`);
+  $("#fn").focus();
+  const go = () => {
+    const f = $("#fn").value.trim(), l = $("#ln").value.trim();
+    if (!f || !l) { $("#err").textContent = "Please write your first name and your last name 😊"; return; }
+    S.first = f; S.last = l; next();
+  };
+  $("#ok").onclick = go; $("#ln").onkeydown = e => { if (e.key === "Enter") go(); };
+}
+const COLORS = [["red", "#ff5a5f"], ["orange", "#ff9f43"], ["yellow", "#ffd93d"], ["green", "#4cc96a"], ["blue", "#4da3ff"], ["purple", "#a56cf0"], ["pink", "#ff8fc7"], ["brown", "#b9835a"], ["turquoise", "#2ec4b6"], ["grey", "#a0a7b4"]];
+function colorScreen(next) {
+  show(`<div class="card center"><div class="big">🎨</div><h1>Hello, ${esc(S.first)}!</h1><h2>What's your favorite color?</h2><p>Click on it and the page will change!</p>
+  <div class="swatches">${COLORS.map(([n, h]) => `<button class="sw" data-h="${h}"><i style="background:${h}"></i><span>${n}</span></button>`).join("")}</div>
+  <p>Another color? <input type="color" id="cp" value="${S.color}" style="width:60px;height:40px;vertical-align:middle;border:0;background:none"></p>
+  <button class="btn" id="ok" disabled>Next ➜</button></div>`);
+  const ok = $("#ok");
+  document.querySelectorAll(".sw").forEach(b => b.onclick = () => {
+    document.querySelectorAll(".sw").forEach(x => x.classList.remove("sel")); b.classList.add("sel");
+    applyColor(b.dataset.h); ok.disabled = false;
+  });
+  $("#cp").oninput = e => { document.querySelectorAll(".sw").forEach(x => x.classList.remove("sel")); applyColor(e.target.value); ok.disabled = false; };
+  ok.onclick = next;
+}
+function startScreen(next) {
+  show(`<div class="card center"><div class="big">🚀</div><h1>Let's start, ${esc(S.first)}!</h1>
+  <p>Today you will do <b>5 activities</b> and <b>4 mini-games</b> to review what we learned this year.</p>
+  <div style="text-align:left;max-width:480px;margin:0 auto;font-size:1.2rem;line-height:1.9">
+  📖 Activity 1: Fede's day<br>🧑 Activity 2: Describe people<br>🐘 Activity 3: Animals<br>🏖️ Activity 4: My vacations<br>🍎 Activity 5: Food</div>
+  <button class="btn" id="ok">Start the activities ➜</button></div>`);
+  $("#ok").onclick = next;
+}
+function scoreScreen(label, textFn) {
+  return next => {
+    show(`<div class="card center"><div class="big">📓</div><h1>${label} finished!</h1><h2>Write your score in your notebook:</h2>
+    <div class="rating">${textFn()}</div><button class="btn" id="ok">Continue ➜</button></div>`);
+    $("#ok").onclick = next;
+  };
+}
+function congrats(html, sub, btn, emojis) {
+  return next => {
+    show(`<div class="card center"><div class="huge">${emojis[0]}</div><h1>${html()}</h1><p style="font-size:1.4rem">${sub}</p><button class="btn" id="ok">${btn} ➜</button></div>`);
+    confetti(emojis, 28); $("#ok").onclick = next;
+  };
+}
+
+/* ---------- Actividad 1: Federico Valverde ---------- */
+function act1(next) {
+  show(`<div class="card"><span class="tag">Activity 1 · Reading</span><h1>⚽ A day with Fede Valverde</h1>
+  <div class="read">
+  <p><b>Federico "Fede" Valverde</b> is a football player from Montevideo, Uruguay. His nickname is <b>"Pajarito"</b> (that means "little bird"). He plays for <b>Real Madrid</b>, in Spain, and for the Uruguayan national team.</p>
+  <p>This is a simple routine of a training day for Fede.</p>
+  <p>He <b>gets up at 8.15am</b> and has breakfast with his family. At <b>10.30am</b> he goes to the training ground and trains with his team. He has lunch at the club at <b>2.00pm</b>.</p>
+  <p>In the afternoon he relaxes with his family and plays video games. He has dinner at <b>9.00pm</b> and he goes to bed at <b>11.00pm</b>.</p></div>
+  <p class="small">Real facts: Fede is from Montevideo, plays for Real Madrid and his nickname is Pajarito. The times are an example for class.</p>
+  <div class="center"><button class="btn" id="ok">Start the questions ➜</button></div></div>`);
+  const text = $(".read").outerHTML;
+  const det = `<details><summary>📖 Read the text again</summary>${text}</details>`;
+  $("#ok").onclick = () => {
+    const q = [
+      mc("What time does Fede get up?", ["8.15am", "9.00am", "6.30am", "at midday"], 0, "", det),
+      mc("Where is Fede from?", ["Argentina", "Uruguay", "Spain", "Brazil"], 1, "", det),
+      mc("What is his nickname?", ["Gatito", "Tigre", "Pajarito", "Perrito"], 2, "", det),
+      mc("What time does he go to the training ground?", ["7.00am", "10.30am", "4.00pm", "9.00pm"], 1, "", det),
+      mc("What does he do in the afternoon?", ["He goes to school", "He plays video games and relaxes", "He sleeps at the club", "He cooks dinner"], 1, "", det),
+      mc("What time does he go to bed?", ["8.00pm", "2.00am", "11.00pm", "6.00pm"], 2, "", det)
+    ];
+    runItems(q, "Activity 1", (s, t) => { S.sc.a1 = s + "/" + t; next(); });
+  };
+}
+
+/* ---------- Mini-juego 1: ahorcado ---------- */
+const HW = [["SHOWER", "🚿"], ["BREAKFAST", "🥞"], ["HOMEWORK", "📚"], ["DINNER", "🍝"], ["LUNCH", "🥪"], ["SCHOOL", "🏫"], ["SLEEP", "😴"], ["WAKE UP", "⏰"], ["BRUSH TEETH", "🪥"], ["GET DRESSED", "👕"], ["PLAY FOOTBALL", "⚽"], ["WATCH TV", "📺"]];
+function gallows(m) {
+  const parts = [`<circle cx="150" cy="62" r="16" stroke="#222" stroke-width="5" fill="#fff"/>`, `<line x1="150" y1="78" x2="150" y2="125" stroke="#222" stroke-width="5"/>`,
+    `<line x1="150" y1="90" x2="128" y2="110" stroke="#222" stroke-width="5"/>`, `<line x1="150" y1="90" x2="172" y2="110" stroke="#222" stroke-width="5"/>`,
+    `<line x1="150" y1="125" x2="132" y2="155" stroke="#222" stroke-width="5"/>`, `<line x1="150" y1="125" x2="168" y2="155" stroke="#222" stroke-width="5"/>`];
+  return `<svg viewBox="0 0 220 180" width="220" style="display:block;margin:auto"><g stroke="#7a5230" stroke-width="7"><line x1="20" y1="170" x2="110" y2="170"/><line x1="50" y1="170" x2="50" y2="15"/><line x1="46" y1="18" x2="150" y2="18"/><line x1="150" y1="18" x2="150" y2="46" stroke-width="4"/></g>${parts.slice(0, m).join("")}</svg>`;
+}
+function hangman(next) {
+  function round() {
+    const [word, hint] = one(HW); let miss = 0; const used = new Set();
+    const draw = () => {
+      const shown = word.split("").map(c => c === " " ? "&nbsp;&nbsp;" : used.has(c) ? c : "_").join(" ");
+      const won = word.split("").every(c => c === " " || used.has(c)), lost = miss >= 6;
+      show(`<div class="card center"><span class="tag">🎮 Mini-game 1 · Hangman</span><h2>Guess the daily activity ${hint}</h2>${gallows(miss)}
+      <div class="word">${shown}</div><p>Mistakes: <b>${miss}/6</b></p>
+      ${won ? `<h2>🎉 Yes! "${word.toLowerCase()}"</h2>` : lost ? `<h2>😅 It was "<b>${word.toLowerCase()}</b>"</h2>` : `<div class="keys">${"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(c => `<button class="key ${used.has(c) ? (word.includes(c) ? "ok" : "no") : ""}" data-c="${c}" ${used.has(c) ? "disabled" : ""}>${c}</button>`).join("")}</div>`}
+      ${won || lost ? `<button class="btn alt" id="again">Play again 🔄</button><button class="btn" id="ok">Continue ➜</button>` : ""}</div>`);
+      if (won) confetti(["⭐", "🎉"], 15);
+      document.querySelectorAll(".key").forEach(b => b.onclick = () => press(b.dataset.c));
+      if (won || lost) { $("#again").onclick = round; $("#ok").onclick = () => { document.onkeydown = null; next(); }; }
+    };
+    const press = c => { if (used.has(c) || miss >= 6) return; used.add(c); if (!word.includes(c)) miss++; draw(); };
+    document.onkeydown = e => { const c = e.key.toUpperCase(); if (/^[A-Z]$/.test(c) && !e.ctrlKey && !e.metaKey && !e.altKey) press(c); };
+    draw();
+  }
+  round();
+}
+
+/* ---------- Actividad 2: describir personas ---------- */
+function act2(next) {
+  const people = [person(false), person(false), person(true)];
+  const build = [];
+  people.forEach(p => {
+    const w = pr(p), vis = `<div class="avatar">${avatar(p)}</div>`;
+    const m = (prompt, opts, correct) => { const o = shuffle(opts); return mc(prompt, o, o.indexOf(correct), vis); };
+    build.push(m(`${w.He} has ______ eyes.`, Object.keys(EYEC), p.eye));
+    if (p.bald) {
+      build.push(m(`${w.He} has no hair. ${w.He} is ______.`, ["bald", "blond", "curly", "short"], "bald"));
+    } else {
+      build.push(m(`${w.His} hair is ______.`, Object.keys(HAIRC), p.hair));
+      build.push(m(`${w.His} hair is ______.`, ["short", "medium", "long"], p.length));
+      build.push(m(`${w.His} hair is ______.`, ["curly", "wavy", "straight"], p.style));
+    }
+  });
+  runItems(build, "Activity 2", (s, t) => { S.sc.a2 = s + "/" + t; next(); });
+}
+
+/* ---------- Mini-juego 2: Guess who ---------- */
+function guessWho(next) {
+  let round = 0, score = 0;
+  (function r() {
+    if (round >= 3) { show(`<div class="card center"><div class="big">🕵️</div><h1>You found ${score}/3!</h1><button class="btn" id="ok">Continue ➜</button></div>`); $("#ok").onclick = next; return; }
+    const t = person(false), w = pr(t);
+    const attrs = ["eye", "hair", "length", "style"], vals = { eye: Object.keys(EYEC), hair: Object.keys(HAIRC), length: ["short", "medium", "long"], style: ["curly", "wavy", "straight"] };
+    const opts = [t];
+    pick(attrs, 3).forEach(a => { const d = Object.assign({}, t, { skin: one(SKINS), shirt: one(SHIRTS) }); d[a] = one(vals[a].filter(v => v !== t[a])); opts.push(d); });
+    const o = shuffle(opts);
+    show(`<div class="card center"><span class="tag">🎮 Mini-game 2 · Guess who? · ${round + 1}/3</span>
+    <h2>${w.He} has ${t.eye} eyes and ${t.length} ${t.style} ${t.hair} hair.</h2><p>Click on the right person!</p>
+    <div class="guess">${o.map((p, i) => `<button data-i="${i}">${avatar(p)}</button>`).join("")}</div><div id="fb"></div></div>`);
+    const bs = document.querySelectorAll(".guess button");
+    bs.forEach(b => b.onclick = () => {
+      const ok = o[+b.dataset.i] === t; bs.forEach(x => x.disabled = true);
+      b.classList.add(ok ? "right" : "wrong"); if (!ok) bs[o.indexOf(t)].classList.add("right"); if (ok) score++;
+      $("#fb").innerHTML = `<p>${ok ? "✅ <b>Great!</b>" : "❌ Look at the green one!"}</p><button class="btn" id="nx">Next ➜</button>`;
+      $("#nx").onclick = () => { round++; r(); };
+    });
+  })();
+}
+
+/* ---------- Actividad 3: animales ---------- */
+const ANIMALS = [
+  { n: "penguin", e: "🐧", t: [["The penguin can't fly.", true, ""], ["The penguin eats grass.", false, "Penguins eat fish."], ["The penguin lives in cold places.", true, ""]] },
+  { n: "cow", e: "🐄", t: [["The cow eats grass.", true, ""], ["The cow can fly.", false, "Cows can't fly."], ["The cow lives on a farm.", true, ""]] },
+  { n: "duck", e: "🦆", t: [["The duck can fly.", true, ""], ["The duck has four legs.", false, "Ducks have two legs."], ["The duck lives near water.", true, ""]] },
+  { n: "elephant", e: "🐘", t: [["The elephant is a herbivore.", true, "Elephants eat plants."], ["The elephant has three legs.", false, "Elephants have four legs."], ["The elephant lives in Africa.", true, ""]] },
+  { n: "lion", e: "🦁", t: [["The lion eats meat.", true, ""], ["The lion is a herbivore.", false, "Lions eat meat."], ["The lion lives in Africa.", true, ""]] },
+  { n: "monkey", e: "🐒", t: [["The monkey eats bananas.", true, ""], ["The monkey can fly.", false, "Monkeys can't fly."], ["The monkey lives in trees.", true, ""]] },
+  { n: "frog", e: "🐸", t: [["The frog has four legs.", true, ""], ["The frog eats insects.", true, ""], ["The frog can fly.", false, "Frogs can't fly."]] },
+  { n: "rabbit", e: "🐰", t: [["The rabbit eats carrots.", true, ""], ["The rabbit has three legs.", false, "Rabbits have four legs."], ["The rabbit is a carnivore.", false, "Rabbits are herbivores: they eat plants."]] }
+];
+function act3(next) {
+  const items = [];
+  pick(ANIMALS, 3).forEach(a => {
+    items.push(typed(a.e, "What animal is this? Write its name in English.", [a.n]));
+    pick(a.t, 2).forEach(([s, v, why]) => items.push(tf(a.e, s, v, why)));
+  });
+  runItems(items, "Activity 3", (s, t) => { S.sc.a3 = s + "/" + t; next(); });
+}
+
+/* ---------- Mini-juego 3: memoria ---------- */
+function memory(next) {
+  const pool = ANIMALS.concat([{ n: "dog", e: "🐶" }, { n: "cat", e: "🐱" }, { n: "pig", e: "🐷" }, { n: "horse", e: "🐴" }]);
+  const six = pick(pool, 6);
+  const cards = shuffle(six.flatMap(a => [{ k: a.n, t: a.e, w: false }, { k: a.n, t: a.n, w: true }]));
+  let open = [], found = 0, moves = 0, lock = false;
+  show(`<div class="card center"><span class="tag">🎮 Mini-game 3 · Memory</span><h2>Match each animal with its name!</h2><div class="mem">${cards.map((c, i) => `<button class="mcard ${c.w ? "word" : ""}" data-i="${i}">❓</button>`).join("")}</div><p id="mv">Moves: 0</p><div id="end"></div></div>`);
+  const bs = document.querySelectorAll(".mcard");
+  bs.forEach(b => b.onclick = () => {
+    const i = +b.dataset.i; if (lock || open.includes(i) || b.classList.contains("done")) return;
+    b.textContent = cards[i].t; b.classList.add("up"); open.push(i);
+    if (open.length === 2) {
+      moves++; $("#mv").textContent = "Moves: " + moves; const [x, y] = open;
+      if (cards[x].k === cards[y].k) { [x, y].forEach(j => { bs[j].classList.remove("up"); bs[j].classList.add("done"); }); open = []; found++;
+        if (found === 6) { $("#end").innerHTML = `<h2>🎉 You did it in ${moves} moves!</h2><button class="btn" id="ok">Continue ➜</button>`; confetti(["🐧", "🦁", "⭐"], 18); $("#ok").onclick = next; } }
+      else { lock = true; setTimeout(() => { [x, y].forEach(j => { bs[j].textContent = "❓"; bs[j].classList.remove("up"); }); open = []; lock = false; }, 900); }
+    }
+  });
+}
+
+/* ---------- Actividad 4: vacaciones + autocorrección ---------- */
+const IRR = { go: "went", goes: "went", eat: "ate", eats: "ate", see: "saw", sees: "saw", swim: "swam", swims: "swam", have: "had", has: "had", buy: "bought", buys: "bought",
+  make: "made", makes: "made", come: "came", comes: "came", take: "took", takes: "took", drink: "drank", drinks: "drank", ride: "rode", rides: "rode", meet: "met", meets: "met",
+  run: "ran", runs: "ran", sleep: "slept", sleeps: "slept", get: "got", gets: "got", give: "gave", gives: "gave", find: "found", finds: "found", write: "wrote", writes: "wrote",
+  sit: "sat", sits: "sat", sing: "sang", sings: "sang", fly: "flew", flies: "flew", wear: "wore", wears: "wore", drive: "drove", drives: "drove", feel: "felt", feels: "felt", leave: "left", leaves: "left" };
+const REG = new Set(["play", "visit", "walk", "watch", "stay", "jump", "dance", "cook", "clean", "listen", "talk", "wash", "help", "climb", "call", "work", "enjoy", "relax", "rest", "study", "try", "cry", "camp", "paint", "fish", "skate", "hike"]);
+const REGSP = { shop: "shopped", stop: "stopped", plan: "planned", travel: "travelled" };
+const OVER = { goed: "went", eated: "ate", swimmed: "swam", buyed: "bought", haved: "had", maked: "made", comed: "came", runned: "ran", taked: "took", drinked: "drank", writed: "wrote", getted: "got", flyed: "flew", sleeped: "slept", seed: "saw", meeted: "met", sitted: "sat" };
+const TYPO = { playd: "played", plaied: "played", visitd: "visited", visitted: "visited", walkd: "walked", wached: "watched", watchd: "watched", stayd: "stayed", beech: "beach", beatch: "beach", famili: "family", fammily: "family", frends: "friends", frend: "friend", vacacion: "vacation", vacasion: "vacation", swiming: "swimming", wuth: "with", whit: "with", whith: "with", wiht: "with", teh: "the", becuase: "because", becouse: "because", sumer: "summer", sommer: "summer", mountan: "mountain", grandmother: "grandmother", grandfater: "grandfather", cusins: "cousins", cousin: "cousin" };
+const NOFLAG = new Set(["to", "did", "didn't", "don't", "doesn't", "can", "could", "will", "would", "should", "must", "may", "might", "let's", "the", "a", "an", "my", "your", "his", "her", "our", "their", "this", "that", "some", "no", "of", "for", "in", "on", "at", "by", "with", "want", "wanted", "like", "love", "liked", "loved", "need", "needed", "about", "after", "before", "without", "going", "to"]);
+function baseOf(w) {
+  if (REG.has(w)) return w; if (REGSP[w]) return w;
+  if (w.endsWith("ies") && REG.has(w.slice(0, -3) + "y")) return w.slice(0, -3) + "y";
+  if (w.endsWith("es") && REG.has(w.slice(0, -2))) return w.slice(0, -2);
+  if (w.endsWith("s") && REG.has(w.slice(0, -1))) return w.slice(0, -1);
+  return null;
+}
+function regPast(b) { if (REGSP[b]) return REGSP[b]; if (/[^aeiou]y$/.test(b)) return b.slice(0, -1) + "ied"; if (b.endsWith("e")) return b + "d"; return b + "ed"; }
+function fixSentence(raw) {
+  const s = raw.trim().replace(/\s+/g, " "), notes = []; let gram = false, minor = false;
+  const toks = s.match(/[A-Za-z']+|[^A-Za-z']+/g) || [];
+  const hasFav = /favou?rite/i.test(s); let prev = "", firstWord = true;
+  const out = toks.map(t => {
+    if (!/^[A-Za-z']+$/.test(t)) return t;
+    const w = t.toLowerCase(); let r = t;
+    if (OVER[w]) { r = OVER[w]; gram = true; notes.push(`<b>${t}</b> → <b>${r}</b>: ese verbo es irregular, no lleva -ed.`); }
+    else if (IRR[w] && !NOFLAG.has(prev) && prev && !(w === "have" && /^(to|can|will|must)$/.test(prev))) { r = IRR[w]; gram = true; notes.push(`<b>${t}</b> → <b>${r}</b>: las vacaciones ya pasaron, así que el verbo va en <b>pasado</b>.`); }
+    else if (baseOf(w) && !NOFLAG.has(prev) && prev) { r = regPast(baseOf(w)); gram = true; notes.push(`<b>${t}</b> → <b>${r}</b>: es un verbo regular, en pasado se le agrega <b>-ed</b>.`); }
+    else if ((w === "am" || w === "is" || w === "are") && !hasFav) { r = w === "are" ? "were" : "was"; gram = true; notes.push(`<b>${t}</b> → <b>${r}</b>: el verbo <i>to be</i> en pasado es <b>was</b> (I, he, she, it) y <b>were</b> (we, you, they).`); }
+    else if (w === "were" && /^(i|he|she|it)$/.test(prev)) { r = "was"; gram = true; notes.push(`<b>${t}</b> → <b>was</b>: con I, he, she o it se usa <b>was</b>.`); }
+    else if (w === "was" && /^(we|they|you)$/.test(prev)) { r = "were"; gram = true; notes.push(`<b>${t}</b> → <b>were</b>: con we, you o they se usa <b>were</b>.`); }
+    else if (TYPO[w] && TYPO[w] !== w) { r = TYPO[w]; minor = true; notes.push(`Ortografía: <b>${t}</b> se escribe <b>${r}</b>.`); }
+    else if (w === "i" && t === "i") { r = "I"; minor = true; notes.push(`La palabra <b>I</b> siempre va con mayúscula.`); }
+    else if (w === "me" && firstWord) { r = "I"; gram = true; notes.push(`Al empezar una oración con el que hace la acción se usa <b>I</b> (no <i>me</i>).`); }
+    if (r !== t && r === r.toLowerCase() && /^[A-Z]/.test(t) && firstWord) r = cap(r);
+    prev = w; firstWord = false; return r;
+  });
+  let fixed = out.join("");
+  if (/^[a-z]/.test(fixed)) { fixed = cap(fixed); minor = true; notes.push("La oración empieza con <b>mayúscula</b>."); }
+  if (!/[.!?]$/.test(fixed)) { fixed += "."; minor = true; notes.push("Al final de la oración va un <b>punto</b>."); }
+  if (s.split(" ").length < 2) { gram = true; notes.push("Probá escribir una oración más completa (sujeto + verbo + lugar o cosa)."); }
+  return { orig: s, fixed, notes, gram, minor };
+}
+function act4(next) {
+  show(`<div class="card"><span class="tag">Activity 4 · Writing</span><h1>🏖️ My last vacations</h1>
+  <p>Write <b>three sentences</b> in English about your last vacations. Remember: the vacations are in the <b>past</b>!</p>
+  <div class="read"><p><b>Examples:</b></p><p>🏊 I <b>went</b> to the beach with my family.<br>🍦 We <b>ate</b> ice cream every day.<br>🎮 I <b>played</b> with my cousins.<br>🏞️ We <b>visited</b> my grandma.</p></div>
+  <label>Sentence 1</label><input type="text" class="vs" autocomplete="off" placeholder="I ..." spellcheck="false">
+  <label>Sentence 2</label><input type="text" class="vs" autocomplete="off" placeholder="We ..." spellcheck="false">
+  <label>Sentence 3</label><input type="text" class="vs" autocomplete="off" placeholder="My ..." spellcheck="false">
+  <div class="center"><button class="btn" id="ok">Send my sentences ✉️</button><div id="err" style="color:#c00;font-weight:700"></div></div></div>`);
+  $("#ok").onclick = () => {
+    const v = [...document.querySelectorAll(".vs")].map(i => i.value);
+    if (v.some(x => !x.trim())) { $("#err").textContent = "Please write the three sentences 😊"; return; }
+    const res = v.map(fixSentence), g = res.filter(r => r.gram).length;
+    S.sc.a4 = ["Excellent ⭐⭐⭐", "Very good ⭐⭐", "Good ⭐", "OK 🙂"][g];
+    show(`<div class="card"><span class="tag">Activity 4 · Check</span><h1>Let's check your sentences ✏️</h1>
+    ${res.map((r, i) => {
+      const same = !r.gram && !r.minor;
+      return `<div class="corr"><b>${i + 1})</b> ${same ? `<span class="fix">${esc(r.orig)}</span> ✅ <b>Perfect!</b>` :
+        `<span class="was">${esc(r.orig)}</span><br>✅ Better: <span class="fix">${esc(r.fixed)}</span><ul>${r.notes.map(n => `<li>${n}</li>`).join("")}</ul>`}</div>`;
+    }).join("")}
+    <p class="small">Don't worry about little things like the order of two words (<i>dog black</i> → <i>black dog</i>): we just correct it for you.</p>
+    <div class="center"><button class="btn" id="ok2">Continue ➜</button></div></div>`);
+    $("#ok2").onclick = next;
+  };
+}
+
+/* ---------- Mini-juego 4: pasado regular ---------- */
+const PV = ["play", "walk", "jump", "watch", "visit", "stay", "dance", "cook", "clean", "listen", "study", "cry", "help", "paint", "climb", "talk"];
+function pastGame(next) {
+  const items = pick(PV, 6).map(v => ({ render(box, report) {
+    const rule = /[^aeiou]y$/.test(v) ? "Si termina en consonante + y, la <b>y</b> cambia a <b>-ied</b>." : v.endsWith("e") ? "Si termina en e, solo se agrega <b>-d</b>." : "A la mayoría de los verbos regulares se les agrega <b>-ed</b>.";
+    box.innerHTML = `<div class="center"><h2>Write the verb in the <b>past</b></h2><div class="big" style="font-size:3rem">I <b>${v}</b> ➜ I ______</div></div><input type="text" id="ans" autocomplete="off" spellcheck="false" placeholder="Write the past form..."><div class="center"><button class="btn" id="ck">Check ✔</button></div>`;
+    const inp = $("#ans"); inp.focus();
+    const go = () => { const a = inp.value.trim().toLowerCase(); if (!a) return; inp.disabled = true; $("#ck").disabled = true; const ok = a === regPast(v); report(ok, ok ? "" : `It is <b>${regPast(v)}</b>. ${rule}`); };
+    $("#ck").onclick = go; inp.onkeydown = e => { if (e.key === "Enter") go(); };
+  } }));
+  runItems(items, "🎮 Mini-game 4 · Past tense", (s, t) => { show(`<div class="card center"><div class="big">🕰️</div><h1>${s}/${t} verbs in the past!</h1><button class="btn" id="ok">Continue ➜</button></div>`); $("#ok").onclick = next; });
+}
+
+/* ---------- Actividad 5: comida ---------- */
+const FOOD = [["🍎", "apple"], ["🍌", "banana"], ["🍞", "bread"], ["🧀", "cheese"], ["🍕", "pizza"], ["🥛", "milk"], ["🍫", "chocolate"], ["🥕", "carrot"], ["🍉", "watermelon"], ["🍗", "chicken"], ["🍦", "ice cream"], ["🥚", "egg"]];
+function act5(next) {
+  const f = pick(FOOD, 6), names = shuffle(f.map(x => x[1])); let sel = null, done = 0;
+  show(`<div class="card center"><span class="tag">Activity 5 · Food</span><h2>Match the food with its name</h2><p>Click a picture, then click its name.</p>
+  <div class="match"><div>${f.map((x, i) => `<button class="em" data-e="${x[1]}">${x[0]}</button>`).join("")}</div><div>${names.map(n => `<button data-n="${n}">${n}</button>`).join("")}</div></div><div id="end"></div></div>`);
+  const ems = document.querySelectorAll("[data-e]"), nms = document.querySelectorAll("[data-n]");
+  ems.forEach(b => b.onclick = () => { if (b.classList.contains("done")) return; ems.forEach(x => x.classList.remove("pick")); b.classList.add("pick"); sel = b; });
+  nms.forEach(b => b.onclick = () => {
+    if (!sel || b.classList.contains("done")) return;
+    if (sel.dataset.e === b.dataset.n) { sel.classList.remove("pick"); sel.classList.add("done"); b.classList.add("done"); sel = null; done++;
+      if (done === 6) { $("#end").innerHTML = `<h2>🎉 All matched!</h2><button class="btn" id="ok">Finish ➜</button>`; $("#ok").onclick = next; } }
+    else { b.classList.add("shake"); sel.classList.add("shake"); const s = sel; setTimeout(() => { b.classList.remove("shake"); s.classList.remove("shake"); }, 400); }
+  });
+}
+
+/* ---------- Final con pizarra ---------- */
+function finalScreen() {
+  show(`<div class="card center"><div class="huge">🏆</div><h1>🎉 CONGRATULATIONS, ${esc(S.first.toUpperCase())}! 🎉</h1>
+  <p style="font-size:1.4rem">You finished all the activities! 🥳👏🌟 You are amazing! 💪😍🎈</p>
+  <h2>🎨 Draw how you felt in these activities</h2>
+  <div class="tools" id="tools"></div>
+  <canvas id="cv" width="800" height="420"></canvas>
+  <div class="tools"><button class="btn alt" id="clr">🗑️ Clear</button><button class="btn" id="sv">💾 Save my drawing</button><button class="btn alt" id="rs">🔄 Start again</button></div></div>`);
+  confetti(["🎉", "⭐", "🏆", "🎈", "🥳", "💖", "🌟"], 60);
+  const cv = $("#cv"), ctx = cv.getContext("2d"); let col = "#222", size = 6, draw = false;
+  ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, cv.width, cv.height); ctx.lineCap = ctx.lineJoin = "round";
+  const tools = $("#tools"), cols = ["#222", "#e63946", "#ff9f1c", "#ffd60a", "#2a9d3f", "#1d7be0", "#8e44ad", "#ff7eb6", "#8b5a2b", "#ffffff"];
+  tools.innerHTML = cols.map(c => `<button class="dot ${c === col ? "sel" : ""}" data-c="${c}" style="background:${c}" title="${c === "#ffffff" ? "eraser" : "color"}"></button>`).join("") +
+    `<label>Size <input type="range" id="sz" min="2" max="30" value="6"></label>`;
+  tools.querySelectorAll(".dot").forEach(b => b.onclick = () => { tools.querySelectorAll(".dot").forEach(x => x.classList.remove("sel")); b.classList.add("sel"); col = b.dataset.c; });
+  $("#sz").oninput = e => size = +e.target.value;
+  const pos = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * cv.width / r.width, (e.clientY - r.top) * cv.height / r.height]; };
+  cv.onpointerdown = e => { draw = true; cv.setPointerCapture(e.pointerId); const [x, y] = pos(e); ctx.strokeStyle = col; ctx.lineWidth = size; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + .01, y + .01); ctx.stroke(); };
+  cv.onpointermove = e => { if (!draw) return; const [x, y] = pos(e); ctx.strokeStyle = col; ctx.lineWidth = size; ctx.lineTo(x, y); ctx.stroke(); };
+  cv.onpointerup = cv.onpointercancel = () => { draw = false; };
+  $("#clr").onclick = () => { ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, cv.width, cv.height); };
+  $("#sv").onclick = () => { const a = document.createElement("a"); a.download = "my-drawing.png"; a.href = cv.toDataURL("image/png"); a.click(); };
+  $("#rs").onclick = () => { S.first = S.last = ""; S.sc = {}; go(0); };
+}
+
+/* ---------- secuencia general ---------- */
+const seq = [
+  welcome, colorScreen, startScreen,
+  act1,
+  scoreScreen("Activity 1", () => S.sc.a1),
+  congrats(() => `🎉 Congratulations, ${esc(S.first)}! 🎉`, "You finished Activity 1. Great reading!", "Mini-game 1", ["🎉", "🥳", "⭐"]),
+  hangman,
+  act2,
+  scoreScreen("Activity 2", () => S.sc.a2),
+  congrats(() => `You are a genius, ${esc(S.first)}! 🧠✨`, "You described the people very well!", "Mini-game 2", ["🧠", "✨", "🌟"]),
+  guessWho,
+  act3,
+  scoreScreen("Activity 3", () => S.sc.a3),
+  congrats(() => `OMG, spectacular job, ${esc(S.first)}! 🤩`, "You know a lot about animals!", "Mini-game 3", ["🤩", "🐘", "🦁", "🐧"]),
+  memory,
+  act4,
+  next => { show(`<div class="card center"><div class="big">📓</div><h1>Activity 4 finished!</h1><h2>Write in your notebook how you did:</h2><div class="rating">${S.sc.a4}</div><p class="small">Excellent: no mistakes or only spelling · Very good: 1 sentence with a grammar mistake · Good: 2 sentences · OK: 3 sentences</p><button class="btn" id="ok">Continue ➜</button></div>`); $("#ok").onclick = next; },
+  congrats(() => `¡Solo falta una actividad, vamos!!! 💪`, "<b>Only one activity left, let's go!!!</b> 🚀", "Mini-game 4", ["🚀", "💪", "🔥"]),
+  pastGame,
+  act5,
+  finalScreen
+];
+let idx = 0;
+function go(i) {
+  document.onkeydown = null; idx = i;
+  $("#barfill").style.width = (i / (seq.length - 1) * 100) + "%";
+  seq[i](() => go(i + 1));
+}
+go(0);
+</script>
+</body>
+</html>
